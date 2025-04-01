@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Calculator made by Krishna</title>
+</head>
+<style>
+    table, th, td {
+        border: 1px solid black;
+    }
+</style>
+<body>
+    <h1>Name: Krishna Chaudhari</h1>
+    <h1>SID: S223751702</h1>
+    <br><br><br>
+
+    <table style="width:100%">
+        <tr>
+            <th><h2>Simple Calculator</h2></th>
+        </tr>
+    </table>
+
+    <input type="number" id="num1" placeholder="Enter first number">
+    <input type="number" id="num2" placeholder="Enter second number" disabled>
+    
+    <select id="operation" onchange="toggleSecondInput()">
+        <option value="add">+</option>
+        <option value="subtract">-</option>
+        <option value="multiply">×</option>
+        <option value="divide">÷</option>
+        <option value="power">Power (x^y)</option>
+        <option value="sqrt">Square Root (√x)</option>
+        <option value="mod">Modulo (%)</option>
+    </select>
+
+    <button onclick="calculate()">Calculate</button>
+
+    <h3>Result: <span id="result"></span></h3>
+
+    <script>
+        function toggleSecondInput() {
+            const operation = document.getElementById("operation").value;
+            const num2Input = document.getElementById("num2");
+
+            if (operation === "sqrt") {
+                num2Input.disabled = true;
+                num2Input.value = ""; // Clear second input for square root
+            } else {
+                num2Input.disabled = false;
+            }
+        }
+
+        function calculate() {
+            const num1 = document.getElementById("num1").value;
+            const num2 = document.getElementById("num2").value;
+            const operation = document.getElementById("operation").value;
+
+            let url = `http://localhost:3040/calculate?num1=${num1}&operation=${operation}`;
+
+            // Append num2 only if it's needed
+            if (operation !== "sqrt") {
+                url += `&num2=${num2}`;
+            }
+
+            // Sends a request to the server, updates the UI with the result, and also handles errors if they occur.
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.result !== undefined) {
+                        document.getElementById("result").innerText = data.result;
+                    } else {
+                        document.getElementById("result").innerText = "Error!";
+                    }
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    document.getElementById("result").innerText = "Error!";
+                });
+        }
+    </script>
+</body>
+</html>
